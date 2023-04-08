@@ -25,8 +25,8 @@
 
         <!-- </p> -->
         <div class="control is-expanded select" style="width: 5%">
-          <select style="width: 100%">
-            <option v-for="room in rooms" :key="room.room_id">
+          <select style="width: 100%" v-model=" selected_price">
+            <option v-for="room in priceRoomNew" :key="room.room_id">
               {{ room.price }}
             </option>
           </select>
@@ -38,15 +38,15 @@
             type="text"
             class="input"
             name="search"
-            value="<%= search %>"
+            v-model="this.$route.query.search"
           />
-          <button class="button" value="Search">Search</button>
+          <button class="button" type="submit" value="Search">Search</button>
         </div>
       </form>
 
       <!-- result -->
       <p class="subtitle has-text-centered mt-6">ผลการค้นหา</p>
-      <div class="container my-5" v-for="room in rooms" :key="room.room_id">
+      <div class="container my-5" v-for="room in priceRoomNew" :key="room.room_id">
         <div class="tile is-ancestor my-5 has-background-danger-light">
           <div class="tile is-4 is-vertical is-parent">
             <div class="tile is-child">
@@ -79,20 +79,50 @@ import axios from 'axios'
 export default {
     data(){
         return{
-            rooms : null
+            rooms : null,
+           selected_room : "All",
+           selected_price: "1500",
+           priceRoomOld : null,
+           priceRoomNew : null,
+           search : this.$route.query.search
+
+
         }
     },
 
     created(){
-        axios.get("http://localhost:3000/search")
+        console.log(this.search)
+        axios.get("http://localhost:3000/search", {params : {search : this.search}})
         .then((response) => {
           this.rooms = response.data;
-          console.log(this.blogs)
+          this.priceRoomNew =response.data;
+          this.priceRoomOld = response.data;
         })
         .catch((err) => {
           console.log(err);
         });
+    },
+    computed: {
+    // typeRoom() {
+    //   return this.rooms.filter(
+    //     (value) =>
+    //       (value.room_type == this.selected_room || this.selected_room == "All") || (value.price == this.selected_price || this.selected_price == "")
+    //   );
+    // },
+  },
+  watch: {
+    selected_room(newval) {
+      console.log(newval);
+      this.priceRoomNew = this.priceRoomOld.filter((value) => {
+        return value.room_type == newval || newval == 'All';
+      });
+    },
+    selected_price(newVal){
+        this.priceRoomNew = this.priceRoomOld.filter((value) =>{
+            return value.price == newVal || newVal == '';
+        })
     }
+  },
 }
 </script>
 
