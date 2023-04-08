@@ -89,27 +89,26 @@ router.post("/blogs", upload.single('blog_image'), async function (req, res, nex
     }
 });
 
-router.get("/blogs/:id", function (req, res, next) {
-  const promise1 = pool.query("SELECT * FROM blogs WHERE id=?", [req.params.id]);
-  const promise2 = pool.query("SELECT * FROM comments WHERE blog_id=?", [req.params.id]);
-  const promise3 = pool.query("SELECT * FROM images WHERE blog_id=? AND comment_id IS NULL", [req.params.id])
+router.get("/detail/:id", async function (req, res, next) {
+  try{
+    const [row_room, columns_room] = await pool.query('SELECT * FROM  roomdetail r join image i on (r.room_img_id = i.room_img_id) join services s on (r.service_id = s.service_id) WHERE r.room_id = ?',[req.params.id])
+    return res.json(row_room);
+  } catch(err){
+    res.json(err)
+  }
 
-  Promise.all([promise1, promise2, promise3])
-    .then((results) => {
-      const blogs = results[0];
-      const comments = results[1];
-      const images = results[2];
-      res.json({
-        blog: blogs[0][0],
-        images: images[0],
-        comments: comments[0],
-        error: null,
-      });
-    })
-    .catch((err) => {
-      return next(err);
-    });
+ 
+
 });
+
+router.get("/search", async function(req, res, next){
+  try{
+    const[row_room, columns_room] = await pool.query('SELECT * FROM roomdetail join image using(room_img_id)')
+    return res.json(row_room)
+  } catch(err){
+    res.json(err)
+  }
+})
 
 router.put("/blogs/:id", function (req, res) {
   // Your code here

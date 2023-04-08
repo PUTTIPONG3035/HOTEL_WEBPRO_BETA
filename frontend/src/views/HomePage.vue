@@ -208,7 +208,7 @@
                         <div class="tile is-child has-text-right">
                             <p class="title has-text-danger"></p>
                             <a href="booking.html">
-                                <button v-if="logins == true" class="button has-background-success">จองตอนนี้</button>
+                                <button v-if="logins == true" class="button has-background-success"> <router-link :to="{ name :'Detail', params : { id : room.room_id} }" >รายละเอียดเพิ่มเติม</router-link></button>
                             </a>
                         </div>
                     </div>

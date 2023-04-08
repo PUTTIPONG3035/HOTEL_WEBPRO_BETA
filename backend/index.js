@@ -12,11 +12,11 @@ app.use(express.urlencoded({ extended: true })) // for parsing application/x-www
 
 // routers
 const indexRouter = require('./routes/index')
-const blogRouter = require('./routes/blog')
+const detailRouter = require('./routes/detail')
 const commentRouter = require('./routes/comment')
 
 app.use(indexRouter.router)
-app.use(blogRouter.router)
+app.use(detailRouter.router)
 app.use(commentRouter.router)
 
 app.listen(3000, () => {
